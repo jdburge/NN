@@ -49,7 +49,7 @@ class ID3Classifier(object):
                 root = LeafNode(_most_common, self.print_target(data, target_feature))
             else:
                 # Find the feature that best classifies.
-                _new_features = features.copy()
+                _new_features = features[:]
                 _best_feature = self.find_best_feature(data, _new_features, _values, target_feature, meta)
                 # Set feature to the root.
                 root = InternalNode(_best_feature, self.print_target(data, target_feature))
@@ -189,7 +189,7 @@ class ID3Classifier(object):
     def entropy(data):
         _size = len(data)
         _counter = Counter(data)
-        return sum(-1*(_counter[i] / _size) * math.log2(_counter[i] / _size) for i in _counter)
+        return sum(-1*(_counter[i] / _size) * math.log(_counter[i] / float(_size), 2) for i in _counter)
 
     # Compute best splitting threshold.
     def compute_best_split(self, data_sets, data):
