@@ -1,5 +1,5 @@
 import numpy as np
-from collections import defaultdict, Counter
+from collections import defaultdict, Counter, OrderedDict
 import math
 import copy
 import itertools
@@ -291,11 +291,11 @@ class ID3Classifier(object):
         if printing:
             print("Number of correctly classified: " + str(correct) + " Total number of test instances: " + str(len(targets)))
 
-        return correct / len(test_data)
+        return correct / float(len(test_data))
 
 
 # Class for handling internal nodes in the decision tree.
-class InternalNode(dict):
+class InternalNode(OrderedDict):
     def __init__(self, feature, targets,  *args, **kwargs):
         self.feature = feature
         self.targets = targets
