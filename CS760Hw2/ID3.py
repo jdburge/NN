@@ -1,6 +1,7 @@
 import numpy as np
 from collections import defaultdict, Counter
 import math
+import copy
 import itertools
 
 
@@ -49,7 +50,7 @@ class ID3Classifier(object):
                 root = LeafNode(_most_common, self.print_target(data, target_feature))
             else:
                 # Find the feature that best classifies.
-                _new_features = features[:]
+                _new_features = copy.copy(features)
                 _best_feature = self.find_best_feature(data, _new_features, _values, target_feature, meta)
                 # Set feature to the root.
                 root = InternalNode(_best_feature, self.print_target(data, target_feature))
@@ -74,10 +75,9 @@ class ID3Classifier(object):
                     root.midpoint = _midpoint
                 # If the feature is categorical.
                 else:
-                    for valueD in meta[_best_feature][1]:
-                        _value = valueD.encode('UTF-8')
+                    for _value in meta[_best_feature][1]:
                         # Create a subset of examples that have this value.
-                        _value_data = np.array([i for i in data if i[_best_feature] == _value])
+                        _value_data = np.array([i for i in data if i[_best_feature].decode('UTF-8') == _value])
                         # Add a new tree branch below the root for the value.
                         # If the subset is empty, set leaf node label to the most common value in the examples.
                         if _value_data is None:
@@ -88,7 +88,7 @@ class ID3Classifier(object):
                             _parent_common = self.find_most_common(data, target_feature, parent_common)
                             _child = self.create_tree(_value_data, target_feature, _new_features, meta, _parent_common)
                         # Set child on this path of the tree.
-                        _key = str(_value.decode('UTF-8'))
+                        _key = str(_value)
                         root[_key] = _child
 
         # Ensure that root was set.
@@ -104,7 +104,7 @@ class ID3Classifier(object):
     def print_node(self, node, depth):
         if not node.is_leaf():
             for child in node:
-                print()
+                print(child)
                 for i in range(0, depth):
                     print "|\t",
                 print str(node),
@@ -180,7 +180,7 @@ class ID3Classifier(object):
             _feature_entropy = self.compute_best_split(_data_sets, data)
         else:
             for _set in _data_sets.values():
-                _feature_entropy += (len(_set) / _size) * self.entropy(_set)
+                _feature_entropy += (float(len(_set)) / float(_size)) * float(self.entropy(_set))
 
         return self.entropy(values) - _feature_entropy
 
@@ -189,7 +189,8 @@ class ID3Classifier(object):
     def entropy(data):
         _size = len(data)
         _counter = Counter(data)
-        return sum(-1*(_counter[i] / _size) * math.log(_counter[i] / float(_size), 2) for i in _counter)
+        return sum(-1*(float(_counter[i]) / float(_size)) * math.log((float(_counter[i]) / float(_size)), 2)
+                  for i in _counter)
 
     # Compute best splitting threshold.
     def compute_best_split(self, data_sets, data):
@@ -204,8 +205,8 @@ class ID3Classifier(object):
             _lower_set = list(itertools.chain.from_iterable([data_sets[k] for k in data_sets if k in _lower]))
             _upper_set = list(itertools.chain.from_iterable([data_sets[k] for k in data_sets if k in _upper]))
 
-            _feature_entropy = (len(_lower_set) / len(data)) * self.entropy(_lower_set) + \
-                               (len(_upper_set) / len(data)) * self.entropy(_upper_set)
+            _feature_entropy = (len(_lower_set) / float(len(data))) * self.entropy(_lower_set) + \
+                               (len(_upper_set) / float(len(data))) * self.entropy(_upper_set)
 
             if _feature_entropy < _lowest_feature_entropy:
                 _lowest_feature_entropy = _feature_entropy
@@ -231,8 +232,8 @@ class ID3Classifier(object):
             _lower_set = list(itertools.chain.from_iterable([_data_sets[k] for k in _data_sets if k in _lower]))
             _upper_set = list(itertools.chain.from_iterable([_data_sets[k] for k in _data_sets if k in _upper]))
 
-            _feature_entropy = (len(_lower_set) / len(data)) * self.entropy(_lower_set) + \
-                               (len(_upper_set) / len(data)) * self.entropy(_upper_set)
+            _feature_entropy = (len(_lower_set) / float(len(data))) * self.entropy(_lower_set) + \
+                               (len(_upper_set) / float(len(data))) * self.entropy(_upper_set)
 
             if _feature_entropy < _lowest_feature_entropy:
                 _lowest_feature_entropy = _feature_entropy
