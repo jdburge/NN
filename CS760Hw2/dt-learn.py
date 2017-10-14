@@ -2,13 +2,13 @@ import sys
 from scipy.io import arff
 import ID3
 
-arg0 = str(sys.argv[0])
 arg1 = str(sys.argv[1])
+arg2 = str(sys.argv[2])
 
-data, meta = arff.loadarff(arg0)
-test_data, test_meta = arff.loadarff(arg1)
+data, meta = arff.loadarff(arg1)
+test_data, test_meta = arff.loadarff(arg2)
 
-m = int(sys.argv[2])
+m = int(sys.argv[3])
 
 myID3 = ID3.ID3Classifier(m)
 
