@@ -106,17 +106,17 @@ class ID3Classifier(object):
             for child in node:
                 print()
                 for i in range(0, depth):
-                    print("|\t", "", end="")
-                print(str(node), "", end="")
+                    print "|\t",
+                print str(node),
                 if node.midpoint is None:
-                    print("=", "", end="")
-                print(str(child), "", end="")
+                    print "=",
+                print str(child),
                 if node.midpoint is not None:
-                    print(str(node.midpoint), "", end="")
-                print(node[child].str_targets(), "", end="")
+                    print str(node.midpoint),
+                print node[child].str_targets(),
                 self.print_node(node[child], depth + 1)
         elif node.is_leaf():
-            print(str(node), "", end="")
+            print str(node),
 
     @staticmethod
     def print_target(data, target_feature):
