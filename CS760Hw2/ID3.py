@@ -104,7 +104,6 @@ class ID3Classifier(object):
     def print_node(self, node, depth):
         if not node.is_leaf():
             for child in node:
-                print(child)
                 for i in range(0, depth):
                     print "|\t",
                 print str(node),
