@@ -14,6 +14,9 @@ else:
 
 data, meta = arff.loadarff(_file)
 
+if len(sys.argv) != 6:
+    _target = meta.names()[-1]
+
 np.random.shuffle(data)
 
 size = len(data)
